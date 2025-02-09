@@ -74,6 +74,9 @@ public interface PictureService extends IService<Picture> {
     );
 
 
+    void clearPictureFile(Picture oldPicture);
+
+
 
 
 
