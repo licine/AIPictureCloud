@@ -2,10 +2,7 @@ package com.tutu.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.tutu.model.dto.picture.PictureQueryRequest;
-import com.tutu.model.dto.picture.PictureReviewRequest;
-import com.tutu.model.dto.picture.PictureUploadByBatchRequest;
-import com.tutu.model.dto.picture.PictureUploadRequest;
+import com.tutu.model.dto.picture.*;
 import com.tutu.model.entity.Picture;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.tutu.model.entity.User;
@@ -77,6 +74,15 @@ public interface PictureService extends IService<Picture> {
     void clearPictureFile(Picture oldPicture);
 
 
+
+    void checkPictureAuth(User loginUser, Picture picture);
+
+
+
+    void deletePicture(long pictureId, User loginUser);
+
+
+    void editPicture(PictureEditRequest pictureEditRequest, User loginUser);
 
 
 

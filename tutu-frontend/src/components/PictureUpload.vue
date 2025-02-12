@@ -17,51 +17,19 @@
 
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue'
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
-import type { UploadChangeParam, UploadProps } from 'ant-design-vue';
+import type {  UploadProps } from 'ant-design-vue';
 import { uploadPictureUsingPost } from '@/api/pictureController.ts'
-
 
 interface Props {
   picture?: API.PictureVO
+  spaceId?: number
   onSuccess?: (newPicture: API.PictureVO) => void
 }
-
 const props = defineProps<Props>()
-
-const params = props.picture ? { id: props.picture.id } : {};
-
-
-function getBase64(img: Blob, callback: (base64Url: string) => void) {
-  const reader = new FileReader();
-  reader.addEventListener('load', () => callback(reader.result as string));
-  reader.readAsDataURL(img);
-}
-
-const fileList = ref([]);
 const loading = ref<boolean>(false);
-const imageUrl = ref<string>('');
-
-const handleChange = (info: UploadChangeParam) => {
-  if (info.file.status === 'uploading') {
-    loading.value = true;
-    return;
-  }
-  if (info.file.status === 'done') {
-    // Get this url from response in real world.
-    getBase64(info.file.originFileObj, (base64Url: string) => {
-      imageUrl.value = base64Url;
-      loading.value = false;
-    });
-  }
-  if (info.file.status === 'error') {
-    loading.value = false;
-    message.error('upload error');
-  }
-};
-
 const beforeUpload = (file: UploadProps['fileList'][number]) => {
   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
   if (!isJpgOrPng) {
@@ -73,8 +41,6 @@ const beforeUpload = (file: UploadProps['fileList'][number]) => {
   }
   return isJpgOrPng && isLt2M
 }
-
-
 /**
  * 上传
  * @param file
@@ -82,7 +48,9 @@ const beforeUpload = (file: UploadProps['fileList'][number]) => {
 const handleUpload = async ({ file }: any) => {
   loading.value = true
   try {
-    const params = props.picture ? { id: props.picture.id } : {};
+    const params: API.PictureUploadRequest = props.picture ? { id: props.picture.id } : {};
+    params.spaceId = props.spaceId;
+    // console.log('params', params)
     const res = await uploadPictureUsingPost(params, {}, file)
     if (res.data.code === 0 && res.data.data) {
       message.success('图片上传成功')

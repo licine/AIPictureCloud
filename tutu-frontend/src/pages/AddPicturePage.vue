@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   editPictureUsingPost,
   getPictureVoByIdUsingGet,
-  listPictureTagCategoryUsingGet, uploadPictureByUrlUsingPost
+  listPictureTagCategoryUsingGet,
 } from '@/api/pictureController.ts'
 import PictureUpload from '@/components/PictureUpload.vue'
-import _default from 'ant-design-vue/es/vc-slick/inner-slider'
-import props = _default.props
 import UrlPictureUpload from '@/components/UrlPictureUpload.vue'
 
 const picture = ref<API.PictureVO>()
@@ -19,6 +17,12 @@ const onSuccess = (newPicture: API.PictureVO) => {
   picture.value = newPicture
   pictureForm.name = newPicture.name
 }
+
+// 空间 id
+const spaceId = computed(() => {
+  return route.query?.spaceId
+})
+
 
 
 const router = useRouter()
@@ -34,6 +38,7 @@ const handleSubmit = async (values: any) => {
   }
   const res = await editPictureUsingPost({
     id: pictureId,
+    spaceId: spaceId.value,
     ...values,
   })
   if (res.data.code === 0 && res.data.data) {
@@ -46,8 +51,6 @@ const handleSubmit = async (values: any) => {
     message.error('创建失败，' + res.data.message)
   }
 }
-
-
 
 const categoryOptions = ref<string[]>([])
 const tagOptions = ref<string[]>([])
@@ -114,15 +117,19 @@ const uploadType = ref<'file' | 'url'>('file')
     <h2 style="margin-bottom: 16px">
       {{ route.query?.id ? '修改图片' : '创建图片' }}
     </h2>
+    <a-typography-paragraph v-if="spaceId" type="secondary">
+      保存至空间：<a :href="`/space/${spaceId}`" target="_blank">{{ spaceId }}</a>
+    </a-typography-paragraph>
+
 
     <!-- 选择上传方式 -->
     <a-tabs v-model:activeKey="uploadType"
     >
       <a-tab-pane key="file" tab="文件上传">
-        <PictureUpload :picture="picture" :onSuccess="onSuccess" />
+        <PictureUpload :spaceId="spaceId" :picture="picture" :onSuccess="onSuccess" />
       </a-tab-pane>
       <a-tab-pane key="url" tab="URL 上传" force-render>
-        <UrlPictureUpload :picture="picture" :onSuccess="onSuccess" />
+        <UrlPictureUpload :spaceId="spaceId" :picture="picture" :onSuccess="onSuccess" />
       </a-tab-pane>
     </a-tabs>
 
