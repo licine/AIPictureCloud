@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, h, ref } from 'vue'
-import { HomeOutlined } from '@ant-design/icons-vue'
+import { HomeOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons-vue'
 import { MenuProps, message } from 'ant-design-vue'
 
 import { useRouter } from 'vue-router'

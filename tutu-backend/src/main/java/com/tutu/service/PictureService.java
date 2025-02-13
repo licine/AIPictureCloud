@@ -10,6 +10,7 @@ import com.tutu.model.vo.PictureVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
 * @author llllle
@@ -84,6 +85,11 @@ public interface PictureService extends IService<Picture> {
 
     void editPicture(PictureEditRequest pictureEditRequest, User loginUser);
 
+
+    List<PictureVO> searchPictureByColor(Long spaceId, String picColor, User loginUser);
+
+
+    void editPictureByBatch(PictureEditByBatchRequest pictureEditByBatchRequest, User loginUser);
 
 
 
