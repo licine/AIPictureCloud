@@ -2,6 +2,7 @@ package com.tutu.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.tutu.api.aliyunai.model.CreateOutPaintingTaskResponse;
 import com.tutu.model.dto.picture.*;
 import com.tutu.model.entity.Picture;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -90,6 +91,10 @@ public interface PictureService extends IService<Picture> {
 
 
     void editPictureByBatch(PictureEditByBatchRequest pictureEditByBatchRequest, User loginUser);
+
+    CreateOutPaintingTaskResponse createPictureOutPaintingTask(CreatePictureOutPaintingTaskRequest createPictureOutPaintingTaskRequest, User loginUser);
+
+
 
 
 
