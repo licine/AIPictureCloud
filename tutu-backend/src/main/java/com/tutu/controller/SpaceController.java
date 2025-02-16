@@ -9,6 +9,7 @@ import com.tutu.constant.UserConstant;
 import com.tutu.exception.BusinessException;
 import com.tutu.exception.ErrorCode;
 import com.tutu.exception.ThrowUtils;
+import com.tutu.manager.auth.SpaceUserAuthManager;
 import com.tutu.model.dto.space.*;
 import com.tutu.model.entity.Picture;
 import com.tutu.model.entity.Space;
@@ -45,6 +46,9 @@ public class SpaceController {
 
     @Resource
     private PictureService pictureService;
+
+    @Resource
+    private SpaceUserAuthManager spaceUserAuthManager;
 
 
     @PostMapping("/add")
@@ -126,12 +130,13 @@ public class SpaceController {
         Space space = spaceService.getById(id);
         ThrowUtils.throwIf(space == null, ErrorCode.NOT_FOUND_ERROR);
         SpaceVO spaceVO = spaceService.getSpaceVO(space, request);
-//        User loginUser = userService.getLoginUser(request);
-//        List<String> permissionList = spaceUserAuthManager.getPermissionList(space, loginUser);
-//        spaceVO.setPermissionList(permissionList);
+        User loginUser = userService.getLoginUser(request);
+        List<String> permissionList = spaceUserAuthManager.getPermissionList(space, loginUser);
+        spaceVO.setPermissionList(permissionList);
         // 获取封装类
         return ResultUtils.success(spaceVO);
     }
+
 
     /**
      * 分页获取空间列表（仅管理员可用）
