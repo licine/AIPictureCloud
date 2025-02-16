@@ -6,6 +6,7 @@
       <a-button type="primary" href="/add_picture/batch" target="_blank" ghost>+ 批量创建图片</a-button>
     </a-space>
   </a-flex>
+  <div style="margin-bottom: 16px" />
 
   <a-form layout="inline" :model="searchParams" @finish="doSearch">
     <a-form-item label="关键词" name="searchText">
@@ -48,6 +49,7 @@
   </a-form>
 
 
+  <div style="margin-bottom: 16px" />
 
 
   <a-table

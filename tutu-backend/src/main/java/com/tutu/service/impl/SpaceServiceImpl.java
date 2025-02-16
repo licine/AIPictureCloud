@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tutu.exception.BusinessException;
 import com.tutu.exception.ErrorCode;
 import com.tutu.exception.ThrowUtils;
+import com.tutu.manager.sharding.DynamicShardingManager;
 import com.tutu.mapper.SpaceMapper;
 import com.tutu.model.dto.space.SpaceAddRequest;
 import com.tutu.model.dto.space.SpaceQueryRequest;
@@ -23,6 +24,7 @@ import com.tutu.model.vo.UserVO;
 import com.tutu.service.SpaceService;
 import com.tutu.service.UserService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -53,6 +55,10 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
 
     @Resource
     private SpaceUserServiceImpl spaceUserService;
+
+//    @Resource
+//    @Lazy
+//    private DynamicShardingManager dynamicShardingManager;
 
     @Override
     public long addSpace(SpaceAddRequest spaceAddRequest, User loginUser) {
@@ -103,8 +109,11 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
                     result = spaceUserService.save(spaceUser);
                     ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR, "创建团队成员记录失败");
                 }
-                // 返回新写入的数据 id
+// 创建分表
+//                 dynamicShardingManager.createSpacePictureTable(space);
+// 返回新写入的数据 id
                 return space.getId();
+
             });
 
             // 返回结果是包装类，可以做一些处理

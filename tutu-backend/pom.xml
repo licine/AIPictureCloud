@@ -41,6 +41,13 @@
             <artifactId>sa-token-spring-boot-starter</artifactId>
             <version>1.39.0</version>
         </dependency>
+        <!-- 分库分表 -->
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
+            <version>5.2.0</version>
+        </dependency>
+
 
 
         <!-- Sa-Token 整合 Redis （使用 jackson 序列化方式） -->
@@ -54,7 +61,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
         </dependency>
-
 
 
         <dependency>
@@ -113,14 +119,6 @@
         </dependency>
 
 
-
-
-
-
-
-
-
-
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
@@ -131,10 +129,6 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-
-
-
-
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
