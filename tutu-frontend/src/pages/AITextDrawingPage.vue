@@ -13,7 +13,7 @@ const prompt = ref<string>('')
 const realPrompt = ref<string>('')
 const drawingStyle = ref<string>('')
 const negativePrompt = ref<string>('')
-const resultImageUrl = ref<string>('')
+const resultImageUrls = ref<string[]>([])
 const taskId = ref<string>()
 const size = ref<string>('1024*1024')
 const n = ref<number>(1)
@@ -36,11 +36,13 @@ const createTask = async () => {
   // console.log(realPrompt.value)
   const res = await createTextDrawingTaskUsingPost({
     prompt: realPrompt.value,
-    // negativePrompt: negativePrompt.value,
+    negativePrompt: negativePrompt.value,
     parameters: {
       size: size.value,
       n: n.value,
       seed: seed.value,
+      watermark: true,
+      promptExtend: true,
     }
   })
   if (res.data.code === 0 && res.data.data) {
@@ -77,7 +79,12 @@ const startPolling = () => {
         const taskResult = res.data.data.output
         if (taskResult.taskStatus === 'SUCCEEDED') {
           message.success('生成图片任务成功')
-          resultImageUrl.value = taskResult.results[0]?.url // 使用可选链操作符
+          // 在获取数据时更新数组
+          taskResult.results.forEach(result => {
+            if (result?.url) {
+              resultImageUrls.value.push(result.url)
+            }
+          })
           clearPolling()
           await handleUpload() // 等待 handleUpload 完成
         } else if (taskResult.taskStatus === 'FAILED') {
@@ -98,27 +105,77 @@ onUnmounted(() => {
   clearPolling()
 })
 
-// 上传图片
+// // 上传图片
+// const handleUpload = async () => {
+//   try {
+//     // resultImageUrl.value = 'https://image.meiye.art/pic_1628436817350?imageMogr2/thumbnail/640x/interlace/1';
+//     if (!resultImageUrl.value) {
+//       message.error('图片 URL 为空')
+//       return
+//     }
+//
+//     const params: API.PictureUploadRequest = { fileUrl: resultImageUrl.value }
+//     const res = await uploadPictureByUrlUsingPost(params)
+//     if (res.data.code === 0 && res.data.data) {
+//       message.success('图片上传成功')
+//     } else {
+//       message.error('图片上传失败，' + res.data.message)
+//     }
+//   } catch (error) {
+//     message.error('图片上传失败')
+//     console.error('图片上传失败', error)
+//   }
+// }
+
+
+// 修改后的上传函数[批量上传]
 const handleUpload = async () => {
   try {
-    // resultImageUrl.value = 'https://image.meiye.art/pic_1628436817350?imageMogr2/thumbnail/640x/interlace/1';
-    if (!resultImageUrl.value) {
-      message.error('图片 URL 为空')
+    // 检查是否有图片URL
+    if (resultImageUrls.value.length === 0) {
+      message.error('没有选择任何图片 URL')
       return
     }
 
-    const params: API.PictureUploadRequest = { fileUrl: resultImageUrl.value }
-    const res = await uploadPictureByUrlUsingPost(params)
-    if (res.data.code === 0 && res.data.data) {
-      message.success('图片上传成功')
+    // 批量上传所有图片
+    const promises = resultImageUrls.value.map(async (url) => {
+      const params: API.PictureUploadRequest = { fileUrl: url }
+      try {
+        const res = await uploadPictureByUrlUsingPost(params)
+        if (res.data.code !== 0 || !res.data.data) {
+          throw new Error(res.data.message || '上传失败')
+        }
+        return true
+      } catch (error) {
+        message.error(`上传 ${url} 失败`)
+        console.error(`上传 ${url} 失败`, error)
+        return false
+      }
+    })
+
+    // 等待所有上传完成
+    const results = await Promise.all(promises)
+
+    // 统计成功和失败的数量
+    const successCount = results.filter(Boolean).length
+    const failCount = results.length - successCount
+
+    // 显示总结消息
+    if (successCount > 0) {
+      message.success(`${successCount} 张图片上传成功`)
+    if (failCount > 0) {
+        message.warning(`${failCount} 张图片上传失败`)
+      }
     } else {
-      message.error('图片上传失败，' + res.data.message)
+      message.error('所有图片上传失败')
     }
+
   } catch (error) {
-    message.error('图片上传失败')
-    console.error('图片上传失败', error)
+    message.error('批量上传过程发生错误')
+    console.error('批量上传错误:', error)
   }
 }
+
 const styles = [
   {
     value: 'default',
@@ -173,8 +230,6 @@ const styles = [
 // 选择样式
 const selectStyle = (label: string) => {
   drawingStyle.value = `绘图风格: ${label} ` // 将样式标签拼接到 prompt 的前面
-  // console.log(drawingStyle.value);
-  // console.log(size);
 }
 
 const getBackgroundStyle = (url) => {
@@ -198,7 +253,7 @@ const getBackgroundStyle = (url) => {
 
         <p>Negative_prompt:</p>
         <a-textarea v-model:value="negativePrompt" :rows="4" placeholder="反向描述【可选】"
-                    :maxlength="6" />
+                     />
         <br>
         <br>
 
@@ -269,11 +324,12 @@ const getBackgroundStyle = (url) => {
 
       <div>
         <a-flex vertical>
-          <p style="font-family: Arial, sans-serif;font-size: larger">{{ prompt }}</p>
+          <p style="font-family: 黑体, sans-serif;font-size: 15px">{{ prompt }}</p>
           <img
-            v-if="resultImageUrl"
-            style="width: 280px; object-fit: cover; border-radius: 20px"
-            :src="resultImageUrl"
+            v-for="imageUrl in resultImageUrls"
+            :key="imageUrl"
+            style="width: 800px; object-fit: cover; border-radius: 20px; margin-bottom: 10px"
+            :src="imageUrl"
             loading="lazy"
            alt="文生图"/>
         </a-flex>

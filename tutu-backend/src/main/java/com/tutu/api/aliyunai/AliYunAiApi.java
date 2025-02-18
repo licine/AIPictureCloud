@@ -99,22 +99,6 @@ public class AliYunAiApi {
         if (createTextDrawingTaskRequest == null) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "绘图参数为空");
         }
-
-        // 发送请求
-        //curl -X POST https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis \
-        //    -H 'X-DashScope-Async: enable' \
-        //    -H "Authorization: Bearer $DASHSCOPE_API_KEY" \
-        //    -H 'Content-Type: application/json' \
-        //    -d '{
-        //    "model": "wanx2.1-t2i-turbo",
-        //    "input": {
-        //        "prompt": "一间有着精致窗户的花店，漂亮的木质门，摆放着花朵"
-        //    },
-        //    "parameters": {
-        //        "size": "1024*1024",
-        //        "n": 1
-        //    }
-        //}'
         HttpRequest httpRequest = HttpRequest.post(CREATE_TEXT_DRAWING_TASK_URL)
                 .header(Header.AUTHORIZATION, "Bearer " + apiKey)
                 // 必须开启异步处理，设置为enable。
