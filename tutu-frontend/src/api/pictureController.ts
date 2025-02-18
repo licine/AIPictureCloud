@@ -211,6 +211,42 @@ export async function listPictureTagCategoryUsingGet(options?: { [key: string]: 
   })
 }
 
+/** createTextDrawingTask POST /api/picture/text_drawing/create_task */
+export async function createTextDrawingTaskUsingPost(
+  body: API.CreatePictureTextDrawingTaskRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseCreateTextDrawingTaskResponse_>(
+    '/api/picture/text_drawing/create_task',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: body,
+      ...(options || {}),
+    }
+  )
+}
+
+/** getTextDrawingTask GET /api/picture/text_drawing/get_task */
+export async function getTextDrawingTaskUsingGet(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getTextDrawingTaskUsingGETParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseGetTextDrawingTaskResponse_>(
+    '/api/picture/text_drawing/get_task',
+    {
+      method: 'GET',
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  )
+}
+
 /** updatePicture POST /api/picture/update */
 export async function updatePictureUsingPost(
   body: API.PictureUpdateRequest,

@@ -1,6 +1,5 @@
 package com.tutu.controller;
 
-import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -8,7 +7,9 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.tutu.annotation.AuthCheck;
 import com.tutu.api.aliyunai.AliYunAiApi;
+import com.tutu.api.aliyunai.model.CreateTextDrawingTaskResponse;
 import com.tutu.api.aliyunai.model.CreateOutPaintingTaskResponse;
+import com.tutu.api.aliyunai.model.GetTextDrawingTaskResponse;
 import com.tutu.api.aliyunai.model.GetOutPaintingTaskResponse;
 import com.tutu.api.imagesearch.ImageSearchApiFacade;
 import com.tutu.api.imagesearch.model.ImageSearchResult;
@@ -43,7 +44,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -403,6 +403,7 @@ public class PictureController {
      */
     @PostMapping("/out_painting/create_task")
     @SaSpaceCheckPermission(value = SpaceUserPermissionConstant.PICTURE_EDIT)
+//    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<CreateOutPaintingTaskResponse> createPictureOutPaintingTask(
             @RequestBody CreatePictureOutPaintingTaskRequest createPictureOutPaintingTaskRequest,
             HttpServletRequest request) {
@@ -424,9 +425,31 @@ public class PictureController {
         return ResultUtils.success(task);
     }
 
+    /**
+     * 创建 AI 文本绘图任务
+     */
+    @PostMapping("/text_drawing/create_task")
+    @SaSpaceCheckPermission(value = SpaceUserPermissionConstant.PICTURE_EDIT)
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<CreateTextDrawingTaskResponse> createTextDrawingTask(
+            @RequestBody CreatePictureTextDrawingTaskRequest createPictureTextDrawingTaskRequest,
+            HttpServletRequest request) {
+        if (createPictureTextDrawingTaskRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        CreateTextDrawingTaskResponse response = pictureService.createPictureTextPaintingTaskResponse(createPictureTextDrawingTaskRequest, loginUser);
+        return ResultUtils.success(response);
+    }
 
-
-
-
+    /**
+     * 查询 AI 文本绘图任务
+     */
+    @GetMapping("/text_drawing/get_task")
+    public BaseResponse<GetTextDrawingTaskResponse> getTextDrawingTask(String taskId) {
+        ThrowUtils.throwIf(StrUtil.isBlank(taskId), ErrorCode.PARAMS_ERROR);
+        GetTextDrawingTaskResponse task = aliYunAiApi.getTextDrawingTask(taskId);
+        return ResultUtils.success(task);
+    }
 
 }

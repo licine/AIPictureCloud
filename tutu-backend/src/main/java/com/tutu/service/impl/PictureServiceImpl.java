@@ -10,6 +10,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutu.api.aliyunai.AliYunAiApi;
+import com.tutu.api.aliyunai.model.CreateTextDrawingTaskRequest;
+import com.tutu.api.aliyunai.model.CreateTextDrawingTaskResponse;
 import com.tutu.api.aliyunai.model.CreateOutPaintingTaskRequest;
 import com.tutu.api.aliyunai.model.CreateOutPaintingTaskResponse;
 import com.tutu.exception.BusinessException;
@@ -32,16 +34,11 @@ import com.tutu.service.PictureService;
 import com.tutu.mapper.PictureMapper;
 import com.tutu.utils.ColorSimilarUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.BeanUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -49,8 +46,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -760,7 +755,27 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
 
 
 
+    @Override
+    public CreateTextDrawingTaskResponse createPictureTextPaintingTaskResponse(CreatePictureTextDrawingTaskRequest CreatePictureTextDrawingTaskRequest, User loginUser) {
+        // 获取图片信息
+        String picturePrompt = CreatePictureTextDrawingTaskRequest.getPrompt();
+        String pictureNegativePrompt = CreatePictureTextDrawingTaskRequest.getNegative_prompt();
 
+        if (StrUtil.isBlank(picturePrompt)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请输入图片描述");
+        }
+        // 权限校验
+        //checkPictureAuth(loginUser, picture);
+        // 构造请求参数
+        CreateTextDrawingTaskRequest taskRequest = new CreateTextDrawingTaskRequest();
+        CreateTextDrawingTaskRequest.Input input = new CreateTextDrawingTaskRequest.Input();
+        input.setPrompt(picturePrompt);
+        input.setNegativePrompt(pictureNegativePrompt);
+        taskRequest.setInput(input);
+        BeanUtil.copyProperties(CreatePictureTextDrawingTaskRequest, taskRequest);
+        // 创建任务
+        return aliYunAiApi.createTextDrawingTask(taskRequest);
+    }
 
 
 

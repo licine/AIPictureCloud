@@ -40,18 +40,13 @@
 
   </a-modal>
 
-
-
-
-
 </template>
 
 <script setup lang="ts">
 import { onUnmounted, ref } from 'vue'
 import {
   createPictureOutPaintingTaskUsingPost, getPictureOutPaintingTaskUsingGet,
-  uploadPictureByUrlUsingPost,
-  uploadPictureUsingPost
+  uploadPictureByUrlUsingPost
 } from '@/api/pictureController'
 import { message } from 'ant-design-vue'
 
@@ -142,7 +137,7 @@ const startPolling = () => {
           resultImageUrl.value = taskResult.outputImageUrl
           clearPolling()
         } else if (taskResult.taskStatus === 'FAILED') {
-          message.error('扩图任务失败')
+          message.error('扩图任务失败, 图片过大或过小【图像分辨率：不低于512×512像素且不超过4096×4096像素。】')
           clearPolling()
         }
       }

@@ -16,6 +16,7 @@ import SearchPicturePage from '@/pages/SearchPicturePage.vue'
 import SpaceUsageAnanlyze from '@/components/analyze/SpaceUsageAnalyze.vue'
 import SpaceAnalyzePage from '@/pages/SpaceAnalyzePage.vue'
 import SpaceUserManagePage from '@/pages/admin/spaceUserManagePage.vue'
+import AITextDrawingPage from '@/pages/AITextDrawingPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -98,13 +99,12 @@ const router = createRouter({
       component: SpaceUserManagePage,
       props: true,
     },
-
-
-
-
-
-
-
+    {
+      path: '/text_drawing',
+      name: 'AI文生图',
+      component: AITextDrawingPage,
+      props: true,
+    },
 
   ],
 

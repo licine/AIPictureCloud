@@ -11,9 +11,21 @@ declare namespace API {
     message?: string
   }
 
+  type BaseResponseCreateTextDrawingTaskResponse_ = {
+    code?: number
+    data?: CreateTextDrawingTaskResponse
+    message?: string
+  }
+
   type BaseResponseGetOutPaintingTaskResponse_ = {
     code?: number
     data?: GetOutPaintingTaskResponse
+    message?: string
+  }
+
+  type BaseResponseGetTextDrawingTaskResponse_ = {
+    code?: number
+    data?: GetTextDrawingTaskResponse
     message?: string
   }
 
@@ -191,12 +203,25 @@ declare namespace API {
     pictureId?: number
   }
 
+  type CreatePictureTextDrawingTaskRequest = {
+    negative_prompt?: string
+    parameters?: Parameters1
+    prompt?: string
+  }
+
+  type CreateTextDrawingTaskResponse = {
+    code?: string
+    message?: string
+    output?: Output1
+    requestId?: string
+  }
+
   type DeleteRequest = {
     id?: number
   }
 
   type GetOutPaintingTaskResponse = {
-    output?: Output1
+    output?: Output2
     requestId?: string
   }
 
@@ -223,6 +248,16 @@ declare namespace API {
   type getSpaceVOByIdUsingGETParams = {
     /** id */
     id?: number
+  }
+
+  type GetTextDrawingTaskResponse = {
+    output?: Output3
+    requestId?: string
+  }
+
+  type getTextDrawingTaskUsingGETParams = {
+    /** taskId */
+    taskId?: string
   }
 
   type getUserByIdUsingGETParams = {
@@ -257,6 +292,11 @@ declare namespace API {
   }
 
   type Output1 = {
+    taskId?: string
+    taskStatus?: string
+  }
+
+  type Output2 = {
     code?: string
     endTime?: string
     message?: string
@@ -266,6 +306,19 @@ declare namespace API {
     taskId?: string
     taskMetrics?: TaskMetrics
     taskStatus?: string
+  }
+
+  type Output3 = {
+    code?: string
+    endTime?: string
+    message?: string
+    results?: Result[]
+    scheduledTime?: string
+    submitTime?: string
+    taskId?: string
+    taskMetrics?: TaskMetrics1
+    taskStatus?: string
+    usage?: Usage
   }
 
   type PagePicture_ = {
@@ -320,6 +373,14 @@ declare namespace API {
     topOffset?: number
     xScale?: number
     yScale?: number
+  }
+
+  type Parameters1 = {
+    n?: number
+    promptExtend?: boolean
+    seed?: number
+    size?: string
+    watermark?: boolean
   }
 
   type Picture = {
@@ -443,6 +504,14 @@ declare namespace API {
     url?: string
     user?: UserVO
     userId?: number
+  }
+
+  type Result = {
+    actualPrompt?: string
+    code?: string
+    message?: string
+    origPrompt?: string
+    url?: string
   }
 
   type SearchPictureByColorRequest = {
@@ -635,6 +704,12 @@ declare namespace API {
     total?: number
   }
 
+  type TaskMetrics1 = {
+    failed?: number
+    succeeded?: number
+    total?: number
+  }
+
   type testDownloadFileUsingGETParams = {
     /** filepath */
     filepath?: string
@@ -645,6 +720,10 @@ declare namespace API {
     id?: number
     picName?: string
     spaceId?: number
+  }
+
+  type Usage = {
+    imageCount?: number
   }
 
   type User = {

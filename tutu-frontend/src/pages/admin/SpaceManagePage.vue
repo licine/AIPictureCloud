@@ -50,8 +50,6 @@
 
   <div style="margin-bottom: 16px" />
 
-
-
   <a-table
     :columns="columns"
     :data-source="dataList"

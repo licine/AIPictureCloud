@@ -1,7 +1,6 @@
 package com.tutu.api.aliyunai.model;
 
 import cn.hutool.core.annotation.Alias;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,7 +10,7 @@ import java.io.Serializable;
  * @create 2025-02-14 15:00
  */
 @Data
-public class CreateGeneratePictureTaskRequest implements Serializable {
+public class CreateTextDrawingTaskRequest implements Serializable {
 
     private String model="wanx2.1-t2i-turbo";
 

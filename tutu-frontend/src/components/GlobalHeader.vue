@@ -78,7 +78,11 @@ const originItems = [
     label: '空间管理',
     title: '空间管理',
   },
-
+  {
+    key: '/text_drawing',
+    label: 'AI文生图',
+    title: 'AI文生图',
+  },
 ]
 
 // 过滤菜单项

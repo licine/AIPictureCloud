@@ -2,13 +2,13 @@ package com.tutu.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.tutu.api.aliyunai.model.CreateTextDrawingTaskResponse;
 import com.tutu.api.aliyunai.model.CreateOutPaintingTaskResponse;
 import com.tutu.model.dto.picture.*;
 import com.tutu.model.entity.Picture;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.tutu.model.entity.User;
 import com.tutu.model.vo.PictureVO;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -95,7 +95,7 @@ public interface PictureService extends IService<Picture> {
     CreateOutPaintingTaskResponse createPictureOutPaintingTask(CreatePictureOutPaintingTaskRequest createPictureOutPaintingTaskRequest, User loginUser);
 
 
-
+    CreateTextDrawingTaskResponse createPictureTextPaintingTaskResponse(CreatePictureTextDrawingTaskRequest CreatePictureTextDrawingTaskRequest, User loginUser);
 
 
 

@@ -25,15 +25,19 @@ public class AliYunAiApi {
     private String apiKey;
 
     // 创建任务地址
+    // AI 扩图
     public static final String CREATE_OUT_PAINTING_TASK_URL = "https://dashscope.aliyuncs.com/api/v1/services/aigc/image2image/out-painting";
-    public static final String CREATE_GENERATE_PICTURE_TASK_URL = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis";
+    // AI 文本绘图
+    public static final String CREATE_TEXT_DRAWING_TASK_URL = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis";
 
     // 查询任务状态
+    // AI 扩图
     public static final String GET_OUT_PAINTING_TASK_URL = "https://dashscope.aliyuncs.com/api/v1/tasks/%s";
-    public static final String GET_GENERATE_PICTURE_TASK_URL = "https://dashscope.aliyuncs.com/api/v1/tasks/%s";
+    // AI 文本绘图
+    public static final String GET_TEXT_DRAWING_TASK_URL = "https://dashscope.aliyuncs.com/api/v1/tasks/%s";
 
     /**
-     * 扩展图片创建任务
+     * AI扩展图片创建任务
      *
      * @param createOutPaintingTaskRequest
      * @return
@@ -66,7 +70,7 @@ public class AliYunAiApi {
     }
 
     /**
-     * 查询创建的任务
+     * AI扩图查询创建的任务
      *
      * @param taskId
      * @return
@@ -86,28 +90,43 @@ public class AliYunAiApi {
     }
 
     /**
-     * 生成图片创建任务
+     * AI生成图片创建任务
      *
-     * @param createGeneratePictureTaskRequest
+     * @param createTextDrawingTaskRequest
      * @return
      */
-    public CreateGeneratePictureTaskResponse createGeneratePictureTask(CreateGeneratePictureTaskRequest createGeneratePictureTaskRequest) {
-        if (createGeneratePictureTaskRequest == null) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "扩图参数为空");
+    public CreateTextDrawingTaskResponse createTextDrawingTask(CreateTextDrawingTaskRequest createTextDrawingTaskRequest) {
+        if (createTextDrawingTaskRequest == null) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "绘图参数为空");
         }
+
         // 发送请求
-        HttpRequest httpRequest = HttpRequest.post(CREATE_GENERATE_PICTURE_TASK_URL)
+        //curl -X POST https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis \
+        //    -H 'X-DashScope-Async: enable' \
+        //    -H "Authorization: Bearer $DASHSCOPE_API_KEY" \
+        //    -H 'Content-Type: application/json' \
+        //    -d '{
+        //    "model": "wanx2.1-t2i-turbo",
+        //    "input": {
+        //        "prompt": "一间有着精致窗户的花店，漂亮的木质门，摆放着花朵"
+        //    },
+        //    "parameters": {
+        //        "size": "1024*1024",
+        //        "n": 1
+        //    }
+        //}'
+        HttpRequest httpRequest = HttpRequest.post(CREATE_TEXT_DRAWING_TASK_URL)
                 .header(Header.AUTHORIZATION, "Bearer " + apiKey)
                 // 必须开启异步处理，设置为enable。
                 .header("X-DashScope-Async", "enable")
                 .header(Header.CONTENT_TYPE, ContentType.JSON.getValue())
-                .body(JSONUtil.toJsonStr(createGeneratePictureTaskRequest));
+                .body(JSONUtil.toJsonStr(createTextDrawingTaskRequest));
         try (HttpResponse httpResponse = httpRequest.execute()) {
             if (!httpResponse.isOk()) {
                 log.error("请求异常：{}", httpResponse.body());
                 throw new BusinessException(ErrorCode.OPERATION_ERROR, "AI 生成图片失败");
             }
-            CreateGeneratePictureTaskResponse response = JSONUtil.toBean(httpResponse.body(), CreateGeneratePictureTaskResponse.class);
+            CreateTextDrawingTaskResponse response = JSONUtil.toBean(httpResponse.body(), CreateTextDrawingTaskResponse.class);
             String errorCode = response.getCode();
             if (StrUtil.isNotBlank(errorCode)) {
                 String errorMessage = response.getMessage();
@@ -120,22 +139,22 @@ public class AliYunAiApi {
 
 
     /**
-     * 查询创建的任务
+     * AI生成图片查询创建的任务
      *
      * @param taskId
      * @return
      */
-    public GetGeneratePictureTaskResponse getGeneratePictureTaskResponse(String taskId) {
+    public GetTextDrawingTaskResponse getTextDrawingTask(String taskId) {
         if (StrUtil.isBlank(taskId)) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "任务 id 不能为空");
         }
-        try (HttpResponse httpResponse = HttpRequest.get(String.format(GET_GENERATE_PICTURE_TASK_URL, taskId))
+        try (HttpResponse httpResponse = HttpRequest.get(String.format(GET_TEXT_DRAWING_TASK_URL, taskId))
                 .header(Header.AUTHORIZATION, "Bearer " + apiKey)
                 .execute()) {
             if (!httpResponse.isOk()) {
                 throw new BusinessException(ErrorCode.OPERATION_ERROR, "获取任务失败");
             }
-            return JSONUtil.toBean(httpResponse.body(), GetGeneratePictureTaskResponse.class);
+            return JSONUtil.toBean(httpResponse.body(), GetTextDrawingTaskResponse.class);
         }
     }
 
